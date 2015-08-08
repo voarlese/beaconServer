@@ -103,7 +103,7 @@ app.post('/login',urlencodedParser,function(req,res){
   //user存入session
   req.session.user_name = req.body.user;
   //抓取post 參數
-  var customSession = rq.body.user;
+  var customSession = req.body.user;
   var user_name = req.body.user;
   var user_password = md5(req.body.password);
   if (!req.body) return res.sendStatus(400)
