@@ -82,8 +82,8 @@ app.post('/getMember',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			res.type('application/json');
-			res.status(200).send(docs);
+			res.type('text/plain');
+			res.status(200).send("user="+req.session.user);
 			res.end();
 		}
 	});
