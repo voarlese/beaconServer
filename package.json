@@ -1,0 +1,13 @@
+{
+  "name": "todo",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.13.2",
+    "express": "*",
+    "md5": "^2.0.0",
+    "mongodb": "*",
+    "nodemailer": "~0.7.1",
+	"express-session": "^1.7.6"
+  }
+}
