@@ -60,7 +60,7 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(request, response) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/register" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/login" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   '<input type="text" name="password" placeholder="..." />' +
@@ -74,7 +74,7 @@ app.get('/', function(request, response) {
 	response.end();
 });
 //login 
-app.get('getMember',urlencodedParser,function(req,res){
+app.post('getMember',urlencodedParser,function(req,res){
 	console.log("getMember : customSession = "+customSession);
 	var user = "kk";
 	var whereName = {"user" : user};
@@ -90,6 +90,8 @@ app.get('getMember',urlencodedParser,function(req,res){
 		}
 	});
 });
+
+
 app.post('/login',urlencodedParser,function(req,res){
   //確認session有無user在沒有就執行登入，有就直接回傳
   if(req.session.user_name){
