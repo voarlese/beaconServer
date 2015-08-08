@@ -8,8 +8,6 @@ var http = require('http');
 var session = require('express-session');
 
 //Configuration
-
-var customSession = ""
 /*
 	Here we are configuring our SMTP Server details.
 	STMP is mail server which is responsible for sending and recieving email.
@@ -60,7 +58,7 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(request, response) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/gerMember" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/login" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   '<input type="text" name="password" placeholder="..." />' +
@@ -75,8 +73,6 @@ app.get('/', function(request, response) {
 });
 //login 
 app.post('/getMember',urlencodedParser,function(req,res){
-	console.log("getMember : customSession = "+customSession);
-	var user = "kk";
 	var whereName = {"user" : user};
 	var collection = myDB.collection('login');
 	collection.find(whereName).toArray(function(err, docs) {
@@ -84,9 +80,9 @@ app.post('/getMember',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			response.type('application/json');
-			response.status(200).send(docs);
-			response.end();
+			res.type('application/json');
+			res.status(200).send(docs);
+			res.end();
 		}
 	});
 });
@@ -103,7 +99,6 @@ app.post('/login',urlencodedParser,function(req,res){
   //user存入session
   req.session.user_name = req.body.user;
   //抓取post 參數
-  var customSession = req.body.user;
   var user_name = req.body.user;
   var user_password = md5(req.body.password);
   if (!req.body) return res.sendStatus(400)
