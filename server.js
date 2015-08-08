@@ -60,7 +60,7 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(request, response) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/login" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/gerMember" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   '<input type="text" name="password" placeholder="..." />' +
@@ -74,7 +74,7 @@ app.get('/', function(request, response) {
 	response.end();
 });
 //login 
-app.post('getMember',urlencodedParser,function(req,res){
+app.post('/getMember',urlencodedParser,function(req,res){
 	console.log("getMember : customSession = "+customSession);
 	var user = "kk";
 	var whereName = {"user" : user};
