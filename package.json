@@ -8,6 +8,7 @@
     "md5": "^2.0.0",
     "mongodb": "*",
     "nodemailer": "~0.7.1",
-	"express-session": "^1.7.6"
+	"express-session": "latest",
+	"cookie-parser": "latest"
   }
 }

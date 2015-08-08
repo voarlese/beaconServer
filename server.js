@@ -6,6 +6,13 @@ var nodemailer = require("nodemailer");
 var md5 = require('md5');
 var http = require('http');
 var session = require('express-session');
+var cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+app.use(session({secret:'wj;oeifj;wa',
+				saveUninitialized:true,
+				resave:true}));
+
 
 //Configuration
 /*
@@ -40,13 +47,7 @@ mongodb.MongoClient.connect(mongodbURL, function(err, db) {
 	}
 });
 
-app.use(session({
-    secret: 'kmfeff',
-    //store: sessionStore, // connect-mongo session store
-    proxy: true,
-    resave: true,
-    saveUninitialized: true
-}));
+
 
 /*登出
 http.get("/logout", function(req, res){
@@ -57,8 +58,8 @@ http.get("/logout", function(req, res){
 });
 */
 
-app.get('/', function(request, response) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/login" method="post">' +
+app.get('/', function(req, res) {
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/getMember" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   '<input type="text" name="password" placeholder="..." />' +
@@ -66,14 +67,15 @@ app.get('/', function(request, response) {
                '<br>' +
                '<button type="submit">Submit</button>' +
             '</form>';
-               
     
-	response.status(200).send(html);
-	response.end();
+    
+	res.status(200).send(html);
+	res.end();
 });
 //login 
 app.post('/getMember',urlencodedParser,function(req,res){
-	var whereName = {"user" : user};
+	console.log('session.user = '+req.session.user);
+	var whereName = {"user" : req.session.user};
 	var collection = myDB.collection('login');
 	collection.find(whereName).toArray(function(err, docs) {
 		if(err){
@@ -90,14 +92,14 @@ app.post('/getMember',urlencodedParser,function(req,res){
 
 app.post('/login',urlencodedParser,function(req,res){
   //確認session有無user在沒有就執行登入，有就直接回傳
-  if(req.session.user_name){
+  if(req.session.user){
 	  res.type('text/plain');
 	  res.status(200).send("1");  
   }
   else{
   //sess.cookie.maxAge = 5000;
   //user存入session
-  req.session.user_name = req.body.user;
+  req.session.user = req.body.user;
   //抓取post 參數
   var user_name = req.body.user;
   var user_password = md5(req.body.password);
