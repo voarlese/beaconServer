@@ -74,7 +74,7 @@ app.get('/', function(request, response) {
 	response.end();
 });
 //login 
-app.post('getMember',urlencodedParser,function(req,res){
+app.get('getMember',urlencodedParser,function(req,res){
 	console.log("getMember : customSession = "+customSession);
 	var user = "kk";
 	var whereName = {"user" : user};
