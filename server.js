@@ -74,6 +74,7 @@ app.get('/', function(req, res) {
 });
 //login 
 app.post('/getMember',urlencodedParser,function(req,res){
+	//無效
 	console.log('session.user = '+req.session.user);
 	var whereName = {"user" : req.session.user};
 	var collection = myDB.collection('login');
@@ -83,7 +84,7 @@ app.post('/getMember',urlencodedParser,function(req,res){
 			res.end();
 		}else{
 			res.type('text/plain');
-			res.status(200).send("user="+req.session.user);
+			res.status(200).send(docs);
 			res.end();
 		}
 	});
