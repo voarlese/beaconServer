@@ -109,7 +109,6 @@ app.post('/login',urlencodedParser,function(req,res){
   var user_password = md5(req.body.password);
   if (!req.body) return res.sendStatus(400)
   //設定query條件
-  var whereName = {"user": user_name,"password": user_password};
   var whereMf ={"user": user_name,"password": user_password,"comfirm":1};
   var collection = myDB.collection('login');
   //暫時只判斷有沒有查到資料,不做json解析，所以做兩次select，第一次用來確認帳號有無開通，第二次確認帳密有無正確
@@ -122,17 +121,19 @@ app.post('/login',urlencodedParser,function(req,res){
 			var jsonObj = JSON.parse(jsonData);
 			var rt = "0";
 			//如果不是undefined或不是null表示有查到資料，則回傳
-			if (typeof docs[0] !== 'undefined' && docs[0] !== null && jsonObj[0].comfirm =="1") { 
-				rt = "1"; console.log("login");
-				res.type('text/plain');
-				res.status(200).send(rt);  
-				res.end();
-			}
-			else if(typeof docs[0] !== 'undefined' && docs[0] !== null && jsonObj[0].comfirm == "0"){
-				rt = "2"; console.log("帳號無開通");
-				res.type('text/plain');
-				res.status(200).send(rt); 
-				res.end();
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
+				if(jsonObj[0].comfirm == 0){
+					rt = "2"; console.log("帳號無開通");
+					res.type('text/plain');
+					res.status(200).send(rt); 
+					res.end();
+				}else{
+					rt = "1"; console.log("login");
+					res.type('text/plain');
+					res.status(200).send(rt);  
+					res.end();
+				}
+				
 			}else{
 				rt = "0";
 				res.type('text/plain');
