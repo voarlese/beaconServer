@@ -76,14 +76,17 @@ app.get('/', function(req, res) {
 app.post('/getMember',urlencodedParser,function(req,res){
 	//無效
 	console.log('session.user = '+req.session.user);
-	var whereName = {"user" : req.session.user};
+	var whereName = {"user" : req.body.user};
 	var collection = myDB.collection('login');
 	collection.find(whereName).toArray(function(err, docs) {
 		if(err){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			res.type('text/plain');
+			res.type('application/json');
+			var jsonData = JSON.stringify(docs);
+			var jsonObj = JSON.parse(jsonData);
+			console.log(jsonObj[0].detail.userName)
 			res.status(200).send(docs);
 			res.end();
 		}
@@ -115,45 +118,33 @@ app.post('/login',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		} else {
+			var jsonData = JSON.stringify(docs);
+			var jsonObj = JSON.parse(jsonData);
 			var rt = "0";
 			//如果不是undefined或不是null表示有查到資料，則回傳
-			if (typeof docs[0] !== 'undefined' && docs[0] !== null) { 
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null && jsonObj[0].comfirm =="1") { 
 				rt = "1"; console.log("login");
 				res.type('text/plain');
 				res.status(200).send(rt);  
 				res.end();
+			}
+			else if(typeof docs[0] !== 'undefined' && docs[0] !== null && jsonObj[0].comfirm == "0"){
+				rt = "2"; console.log("帳號無開通");
+				res.type('text/plain');
+				res.status(200).send(rt); 
+				res.end();
 			}else{
-				//沒查到資料表示沒開通帳號，再查一次確認帳號密碼有無正確
-				collection.find(whereName).toArray(function(err, docs) {
-					if (err) {
-						res.status(406).send(err);
-						res.end();
-					}else{
-						
-						if (typeof docs[0] !== 'undefined' && docs[0] !== null) { 
-								rt = "2"; console.log("帳號無開通");
-								res.type('text/plain');
-								res.status(200).send(rt);  
-								res.end();
-							}else{
-								rt = "0";
-								res.type('text/plain');
-								res.status(200).send(rt);  
-								res.end();
-							}
-						
-						/* return json object 
-						res.type('sapplication/json');
-						res.status(200).send(docs);
-						res.end();
-						*/
-					}
-				});
-			}	
+				rt = "0";
+				res.type('text/plain');
+				res.status(200).send(rt);  
+				res.end();
+			}
 		}
 	});
   }
 });
+
+
 app.get('/comfirm',function(req,res){
 	var mf = req.query.mf
 	var user_name = req.query.user
