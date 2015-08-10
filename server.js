@@ -59,11 +59,14 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(req, res) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/getMember" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/updateMember" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   '<input type="text" name="password" placeholder="..." />' +
 			   '<input type="text" name="email" placeholder="..." />' +
+			   '<input type="text" name="userName" placeholder="name" />' +
+			   '<input type="text" name="userPhone" placeholder="phone" />' +
+			   '<input type="text" name="userAddress" placeholder="address" />' +
                '<br>' +
                '<button type="submit">Submit</button>' +
             '</form>';
@@ -76,21 +79,91 @@ app.get('/', function(req, res) {
 app.post('/getMember',urlencodedParser,function(req,res){
 	//無效
 	console.log('session.user = '+req.session.user);
-	var whereName = {"user" : req.body.user};
+	var whereName = {"user" : req.body.user,detail:{$exists:true}};
 	var collection = myDB.collection('login');
 	collection.find(whereName).toArray(function(err, docs) {
 		if(err){
 			res.status(406).send(err);
 			res.end();
 		}else{
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
 			res.type('application/json');
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
-			console.log(jsonObj[0].detail.userName)
+			console.log(jsonObj[0].detail.userName);
 			res.status(200).send(docs);
 			res.end();
+			}else{
+				res.type('text/plain');
+				res.status(200).send("no detail");
+				res.end();
+			}
 		}
 	});
+});
+app.post('/updateMember',urlencodedParser,function(req,res){
+	var user = req.body.user;
+	var userName = req.body.userName;
+	var userPhone = req.body.userPhone;
+	var userAddress = req.body.userAddress;
+	var reward = req.body.reward;
+ 	var collection = myDB.collection('login');
+	var whereName = {"user": user};
+
+	/*
+	collection.find(whereName).toArray(function(err, docs) {
+		if(err){
+			res.status(406).send(err);
+			res.end();
+		}else{
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
+				var jsonData = JSON.stringify(docs);
+				var jsonObj = JSON.parse(jsonData);
+				var updateArray = [];
+				var updateSet = "";
+				if(jsonObj[0].detail.userName !== userName){
+					updateArray[0]={"userName":userName};
+				}
+				if(jsonObj[0].detail.userPhone !== userPhone){
+					updateArray[1]={"userPhone:":userPhone};
+				}
+				if(jsonObj[0].detail.userAddress !== userAddress){
+					updateArray[2]={"userAddress:":userAddress};
+				}
+				if(jsonObj[0].detail.reward !== reward){
+					updateArray[3]={"reward:":reward};
+				}
+				if(updateArray.length > 0){
+					var aaaa =JSON.parse(JSON.stringify(updateArray));
+					
+					collection.update(whereName, {$set: {"detail":aaaa}},  function(err) {
+						if(err){
+							res.send("There was a problem adding the information to the database.");
+							console.log("update worng"+err);		
+						}else{
+							res.type("text/plain");
+							res.status(200).send("ok");
+							res.end();	
+						}
+					});
+				}else{
+					res.type("text/plain");
+					res.status(200).send("ok");
+					res.end();
+				}
+			}
+		}
+	});*/
+	collection.update(whereName, {$set: {"detail":{"userName":userName,"userPhone":userPhone,"userAddress":userAddress,"reward":reward}}},  function(err) {
+      if(err){
+		    res.send("There was a problem adding the information to the database.");
+		    console.log(err);		
+		}else{
+			res.type("text/plain");
+			res.status(200).send("ok");
+			res.end();	
+		}
+    });
 });
 
 
@@ -109,9 +182,8 @@ app.post('/login',urlencodedParser,function(req,res){
   var user_password = md5(req.body.password);
   if (!req.body) return res.sendStatus(400)
   //設定query條件
-  var whereMf ={"user": user_name,"password": user_password,"comfirm":1};
+  var whereMf ={"user": user_name,"password": user_password};
   var collection = myDB.collection('login');
-  //暫時只判斷有沒有查到資料,不做json解析，所以做兩次select，第一次用來確認帳號有無開通，第二次確認帳密有無正確
 	collection.find(whereMf).toArray(function(err, docs) {
 		if (err) {
 			res.status(406).send(err);
@@ -183,12 +255,19 @@ app.post('/register',urlencodedParser,function(req,res){
 		}
 	});
 	collection.insert({
+		"id":"",
         "user" : user_name,
         "password" : md5(user_password),
 		"email" : user_email,
 		"comfirm" : 0,
-		"mf" : mf
-		
+		"mf" : mf,
+		"pic":"",
+		"detail" : {
+			"userName":"",
+			"userPhone":"",
+			"userAddress":"",
+			"reward":""
+		},		
     }, function (err, doc) {
         if (err) {
             // If it failed, return error
