@@ -1,3 +1,17 @@
+Skip to content
+This repository  
+Pull requests
+Issues
+Gist
+ @iseeking101
+ Unwatch 1
+  Star 0
+  Fork 0
+iseeking101/beaconServer
+Branch: master  beaconServer/server.js
+User 6 days ago d
+2 contributors @danielle777 @iseeking101
+RawBlameHistory     361 lines (325 sloc)  10.046 kB
 var express = require('express');
 var mongodb = require('mongodb');
 var bodyParser = require('body-parser');
@@ -75,10 +89,34 @@ app.get('/', function(req, res) {
 	res.status(200).send(html);
 	res.end();
 });
-//login 
+app.post('/getOld',urlencodedParser,function(req,res){
+	 
+	
+	var whereName = {"user" : req.body.user,old_detail:{$exists:true}};
+	var collection = myDB.collection('login');
+	collection.find(whereName).toArray(function(err, docs) {
+		if(err){
+			res.status(406).send(err);
+			res.end();
+		}else{
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
+			res.type('application/json');
+			var jsonData = JSON.stringify(docs);
+			var jsonObj = JSON.parse(jsonData);
+			console.log(jsonObj[0].old_detail.userName);
+			res.status(200).send(docs);
+			res.end();
+			}else{
+				res.type('text/plain');
+				res.status(200).send("no detail");
+				res.end();
+			}
+		}
+	});
+});
 app.post('/getMember',urlencodedParser,function(req,res){
-	//無效
-	console.log('session.user = '+req.session.user);
+	 
+	
 	var whereName = {"user" : req.body.user,detail:{$exists:true}};
 	var collection = myDB.collection('login');
 	collection.find(whereName).toArray(function(err, docs) {
@@ -100,6 +138,28 @@ app.post('/getMember',urlencodedParser,function(req,res){
 			}
 		}
 	});
+});
+app.post('/updateOld',urlencodedParser,function(req,res){
+	var user = req.body.user;
+	var oldName = req.body.oldName;
+	var oldCharacteristic = req.body.oldCharacteristic;
+	var oldhistory = req.body.oldhistory;
+	var oldclothes = req.body.oldclothes;
+	var oldaddr = req.body.oldaddr;
+	var beaconId = req.body.beaconId;
+ 	var collection = myDB.collection('login');
+	var whereName = {"user": user};
+
+	collection.update(whereName, {$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}},  function(err) {
+      if(err){
+		    res.send("There was a problem adding the information to the database.");
+		    console.log(err);		
+		}else{
+			res.type("text/plain");
+			res.status(200).send("ok");
+			res.end();	
+		}
+    });
 });
 app.post('/updateMember',urlencodedParser,function(req,res){
 	var user = req.body.user;
@@ -267,7 +327,11 @@ app.post('/register',urlencodedParser,function(req,res){
 			"userPhone":"",
 			"userAddress":"",
 			"reward":""
-		},		
+		},
+		"old_detail":{
+			
+			
+		}
     }, function (err, doc) {
         if (err) {
             // If it failed, return error
@@ -303,9 +367,10 @@ app.get('/api/test', function(request, response) {
 		}
 	})
 });
-
 */
 var port = process.env.PORT || 3000; // process.env.PORT for Heroku
 http.createServer(app).listen(port);
 
 
+Status API Training Shop Blog About Pricing
+© 2015 GitHub, Inc. Terms Privacy Security Contact Help
