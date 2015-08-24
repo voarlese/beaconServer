@@ -1,17 +1,4 @@
-Skip to content
-This repository  
-Pull requests
-Issues
-Gist
- @iseeking101
- Unwatch 1
-  Star 0
-  Fork 0
-iseeking101/beaconServer
-Branch: master  beaconServer/server.js
-User 6 days ago d
-2 contributors @danielle777 @iseeking101
-RawBlameHistory     361 lines (325 sloc)  10.046 kB
+
 var express = require('express');
 var mongodb = require('mongodb');
 var bodyParser = require('body-parser');
