@@ -358,6 +358,3 @@ app.get('/api/test', function(request, response) {
 var port = process.env.PORT || 3000; // process.env.PORT for Heroku
 http.createServer(app).listen(port);
 
-
-Status API Training Shop Blog About Pricing
-© 2015 GitHub, Inc. Terms Privacy Security Contact Help
