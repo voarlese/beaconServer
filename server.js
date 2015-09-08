@@ -60,14 +60,13 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(req, res) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/updateMember" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/updateOld" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
-			   '<input type="text" name="password" placeholder="..." />' +
-			   '<input type="text" name="email" placeholder="..." />' +
-			   '<input type="text" name="userName" placeholder="name" />' +
-			   '<input type="text" name="userPhone" placeholder="phone" />' +
-			   '<input type="text" name="userAddress" placeholder="address" />' +
+			   //'<input type="text" name="password" placeholder="..." />' +
+			   //'<input type="text" name="email" placeholder="..." />' +
+			   '<input type="text" name="beaconId" placeholder="..." />' +
+			   
                '<br>' +
                '<button type="submit">Submit</button>' +
             '</form>';
@@ -136,8 +135,8 @@ app.post('/updateOld',urlencodedParser,function(req,res){
 	var beaconId = req.body.beaconId;
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
-//{$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}}
-	collection.update(whereName, {$set: {"old_detail.$.beaconId":beaconId}},  function(err) {
+//
+	collection.update(whereName, {$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}},  function(err) {
       if(err){
 		    res.send("There was a problem adding the information to the database.");
 		    console.log(err);		
@@ -243,7 +242,7 @@ app.post('/register',urlencodedParser,function(req,res){
     var user_name = req.body.user;
 	var user_password = req.body.password;
 	var user_email = req.body.email;
-	var mf = md5(Math.random())
+	var mf = md5(Math.random());
 	var collection = myDB.collection('login');
 	var content = "帳號:"+ user_name + "  您好，請點網址開通帳號: http://beacon-series.herokuapp.com/comfirm?mf=" + mf + "&user="+user_name
 	var mailOptions={
@@ -251,19 +250,17 @@ app.post('/register',urlencodedParser,function(req,res){
 		subject : "認證信",
 		text : content
 	}
-	smtpTransport.sendMail(mailOptions, function(error, response){
-		if(error){
-			console.log(error);		
-		}else{
-			console.log("Message sent: " + response.message);		
-		}
-	});
-	collection.findOne({"user":user_name}).toArray(function(err,docs){
+	console.log(user_name);
+	collection.find({"user":user_name}).toArray(function(err,docs){
 		if(err){
 			res.status(406).send(err);
 			res.end();
 		}else{
 			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) {
+				res.type("text/plain");
+				res.status(200).send("exist");
+				res.end();
+			}else{
 				collection.insert({
 		"id":"",
         "user" : user_name,
@@ -297,15 +294,19 @@ app.post('/register',urlencodedParser,function(req,res){
             // If it worked, set the header so the address bar doesn't still say /adduser
             res.type("text/plain");
 			res.status(200).send("OK");
+			smtpTransport.sendMail(mailOptions, function(error, response){
+			if(error){
+				console.log(error);		
+			}else{
+			console.log("Message sent: " + response.message);		
+			}
+			});
 			res.end();
             // And forward to success page
             
         }
-    });	
-			}else{
-				res.type("text/plain");
-				res.status(200).send("exist");
-				res.end();
+    });
+				
 			}
 				
 		}	
