@@ -136,8 +136,8 @@ app.post('/updateOld',urlencodedParser,function(req,res){
 	var beaconId = req.body.beaconId;
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
-
-	collection.update(whereName, {$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}},  function(err) {
+//{$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}}
+	collection.update(whereName, {$set: {"old_detail.$.beaconId":beaconId}},  function(err) {
       if(err){
 		    res.send("There was a problem adding the information to the database.");
 		    console.log(err);		
@@ -157,50 +157,7 @@ app.post('/updateMember',urlencodedParser,function(req,res){
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
 
-	/*
-	collection.find(whereName).toArray(function(err, docs) {
-		if(err){
-			res.status(406).send(err);
-			res.end();
-		}else{
-			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
-				var jsonData = JSON.stringify(docs);
-				var jsonObj = JSON.parse(jsonData);
-				var updateArray = [];
-				var updateSet = "";
-				if(jsonObj[0].detail.userName !== userName){
-					updateArray[0]={"userName":userName};
-				}
-				if(jsonObj[0].detail.userPhone !== userPhone){
-					updateArray[1]={"userPhone:":userPhone};
-				}
-				if(jsonObj[0].detail.userAddress !== userAddress){
-					updateArray[2]={"userAddress:":userAddress};
-				}
-				if(jsonObj[0].detail.reward !== reward){
-					updateArray[3]={"reward:":reward};
-				}
-				if(updateArray.length > 0){
-					var aaaa =JSON.parse(JSON.stringify(updateArray));
-					
-					collection.update(whereName, {$set: {"detail":aaaa}},  function(err) {
-						if(err){
-							res.send("There was a problem adding the information to the database.");
-							console.log("update worng"+err);		
-						}else{
-							res.type("text/plain");
-							res.status(200).send("ok");
-							res.end();	
-						}
-					});
-				}else{
-					res.type("text/plain");
-					res.status(200).send("ok");
-					res.end();
-				}
-			}
-		}
-	});*/
+	
 	collection.update(whereName, {$set: {"detail":{"userName":userName,"userPhone":userPhone,"userAddress":userAddress,"reward":reward}}},  function(err) {
       if(err){
 		    res.send("There was a problem adding the information to the database.");
@@ -301,7 +258,13 @@ app.post('/register',urlencodedParser,function(req,res){
 			console.log("Message sent: " + response.message);		
 		}
 	});
-	collection.insert({
+	collection.findOne({"user":user_name}).toArray(function(err,docs){
+		if(err){
+			res.status(406).send(err);
+			res.end();
+		}else{
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) {
+				collection.insert({
 		"id":"",
         "user" : user_name,
         "password" : md5(user_password),
@@ -316,7 +279,12 @@ app.post('/register',urlencodedParser,function(req,res){
 			"reward":""
 		},
 		"old_detail":{
-			
+			"beaconId":"",
+			"oldName":"",
+			"oldCharacteristic":"",
+			"oldhistory":"",
+			"oldclothes":"",
+			"oldaddr":""
 			
 		}
     }, function (err, doc) {
@@ -334,6 +302,16 @@ app.post('/register',urlencodedParser,function(req,res){
             
         }
     });	
+			}else{
+				res.type("text/plain");
+				res.status(200).send("exist");
+				res.end();
+			}
+				
+		}	
+
+	});
+	
 });
 
 
