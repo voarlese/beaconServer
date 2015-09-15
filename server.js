@@ -166,7 +166,7 @@ app.post('/updateBeaconId',urlencodedParser,function(req,res){
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
 			var e ="";
-			for(var i =0 ; i = jsonObj.length();i++){
+			for(var i =0 ; i = jsonObj.length ;i++){
 				
 				if ( jsonObj[i].old_detail.beaconId == beaconId ){
 					e = "exist";
@@ -175,7 +175,6 @@ app.post('/updateBeaconId',urlencodedParser,function(req,res){
 			}
 			
 			if ( e == "exist") { 
-			console.log(jsonObj[0].old_detail.beaconId);
 			res.type("text/plain");
 			res.status(200).send("exist");
 			res.end();
