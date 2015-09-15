@@ -60,7 +60,7 @@ http.get("/logout", function(req, res){
 */
 
 app.get('/', function(req, res) {
-	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/updateOld" method="post">' +
+	var html = '<p>welcome tracking of missing uncle!</p>'+'<form action="/updateBeaconId" method="post">' +
                'Enter your name:' +
                '<input type="text" name="user" placeholder="..." />' +
 			   //'<input type="text" name="password" placeholder="..." />' +
@@ -166,15 +166,19 @@ app.post('/updateBeaconId',urlencodedParser,function(req,res){
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
 			var e ="";
+			console.log("in find");
 			for(var i =0 ; i < jsonObj.length ;i++){
 				
 				if ( jsonObj[i].old_detail.beaconId == beaconId ){
 					e = "exist";
-					return e ;
+					console.log("e="+e);
+					break;
 				} 	
+				console.log("in for"+i);
 			}
 			
 			if ( e == "exist") { 
+			console.log("in exist");
 			res.type("text/plain");
 			res.status(200).send("exist");
 			res.end();
