@@ -158,7 +158,7 @@ app.post('/updateBeaconId',urlencodedParser,function(req,res){
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
 // collection.find({"user":user_name}).toArray(function(err,docs){});
-	collection.find({"user":user_name}).toArray(function(err,docs){
+	collection.find({"user":user}).toArray(function(err,docs){
 		if(err){
 			res.status(406).send(err);
 			res.end();
