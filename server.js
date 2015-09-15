@@ -85,7 +85,7 @@ app.post('/getOld',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			if (typeof docs[0] !== 'undefined' || docs[0] !== null ) { 
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
 			res.type('application/json');
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
@@ -110,7 +110,7 @@ app.post('/getMember',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			if (typeof docs[0] !== 'undefined' || docs[0] !== null ) { 
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
 			res.type('application/json');
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
@@ -244,7 +244,7 @@ app.post('/login',urlencodedParser,function(req,res){
 			var jsonObj = JSON.parse(jsonData);
 			var rt = "0";
 			//如果不是undefined或不是null表示有查到資料，則回傳
-			if (typeof docs[0] !== 'undefined' || docs[0] !== null ) { 
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) { 
 				if(jsonObj[0].comfirm == 0){
 					rt = "2"; console.log("帳號無開通");
 					res.type('text/plain');
@@ -304,7 +304,7 @@ app.post('/register',urlencodedParser,function(req,res){
 			res.status(406).send(err);
 			res.end();
 		}else{
-			if (typeof docs[0] !== 'undefined' || docs[0] !== null ) {
+			if (typeof docs[0] !== 'undefined' && docs[0] !== null ) {
 				res.type("text/plain");
 				res.status(200).send("exist");
 				res.end();
