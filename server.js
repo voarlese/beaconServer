@@ -147,6 +147,45 @@ app.post('/updateOld',urlencodedParser,function(req,res){
 		}
     });
 });
+app.post('/updateBeaconId',urlencodedParser,function(req,res){
+	var user = req.body.user;
+	var oldName = req.body.oldName;
+	var oldCharacteristic = req.body.oldCharacteristic;
+	var oldhistory = req.body.oldhistory;
+	var oldclothes = req.body.oldclothes;
+	var oldaddr = req.body.oldaddr;
+	var beaconId = req.body.beaconId;
+ 	var collection = myDB.collection('login');
+	var whereName = {"user": user};
+// collection.find({"user":user_name}).toArray(function(err,docs){});
+	collection.find({"user":user_name}).toArray(function(err,docs){
+		if(err){
+			res.status(406).send(err);
+			res.end();
+		}else{
+			var jsonData = JSON.stringify(docs);
+			var jsonObj = JSON.parse(jsonData);
+			if (typeof jsonObj[0].old_detail.beaconId !== 'undefined' && jsonObj[0].old_detail.beaconId !== null ) { 
+			console.log(jsonObj[0].old_detail.beaconId);
+			res.type("text/plain");
+			res.status(200).send("exist");
+			res.end();
+			}else{
+				collection.update(whereName, {$set: {"old_detail":{"beaconId":beaconId,"oldName":oldName,"oldCharacteristic":oldCharacteristic,"oldhistory":oldhistory,"oldclothes":oldclothes,"oldaddr":oldaddr}}},  function(err) {
+					if(err){
+					res.send("There was a problem adding the information to the database.");
+					console.log(err);		
+					}else{
+					res.type("text/plain");
+					res.status(200).send("ok");
+					res.end();	
+					}	
+				});
+			}
+		}
+		
+	});
+});
 app.post('/updateMember',urlencodedParser,function(req,res){
 	var user = req.body.user;
 	var userName = req.body.userName;
