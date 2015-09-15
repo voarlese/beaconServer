@@ -158,14 +158,23 @@ app.post('/updateBeaconId',urlencodedParser,function(req,res){
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
 // collection.find({"user":user_name}).toArray(function(err,docs){});
-	collection.find({"user":user}).toArray(function(err,docs){
+	collection.find().toArray(function(err,docs){
 		if(err){
 			res.status(406).send(err);
 			res.end();
 		}else{
 			var jsonData = JSON.stringify(docs);
 			var jsonObj = JSON.parse(jsonData);
-			if ( jsonObj[0].old_detail.beaconId == beaconId ) { 
+			var e ="";
+			for(var i =0 ; i = jsonObj.length;i++){
+				
+				if ( jsonObj[i].old_detail.beaconId == beaconId ){
+					e = "exist";
+					return e ;
+				} 	
+			}
+			
+			if ( e == "exist") { 
 			console.log(jsonObj[0].old_detail.beaconId);
 			res.type("text/plain");
 			res.status(200).send("exist");
