@@ -204,11 +204,12 @@ app.post('/updateMember',urlencodedParser,function(req,res){
 	var userPhone = req.body.userPhone;
 	var userAddress = req.body.userAddress;
 	var reward = req.body.reward;
+	var location = req.body.location;	
  	var collection = myDB.collection('login');
 	var whereName = {"user": user};
 
 	
-	collection.update(whereName, {$set: {"detail":{"userName":userName,"userPhone":userPhone,"userAddress":userAddress,"reward":reward}}},  function(err) {
+	collection.update(whereName, {$set: {"detail":{"userName":userName,"userPhone":userPhone,"userAddress":userAddress,"reward":reward,"location":location}}},  function(err) {
       if(err){
 		    res.send("There was a problem adding the information to the database.");
 		    console.log(err);		
@@ -324,7 +325,8 @@ app.post('/register',urlencodedParser,function(req,res){
 			"userName":"",
 			"userPhone":"",
 			"userAddress":"",
-			"reward":""
+			"reward":"",
+			"location":""
 		},
 		"old_detail":{
 			"beaconId":"",
